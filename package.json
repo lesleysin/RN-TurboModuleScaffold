@@ -16,5 +16,12 @@
     "commander": "^9.4.1",
     "inquirer": "^8.1.4"
   },
-  "bin": "./index.js"
+  "bin": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lesleysin/RN-TurboModuleScaffold"
+  },
+  "bugs": {
+    "url": "https://github.com/lesleysin/RN-TurboModuleScaffold/issues"
+  }
 }
