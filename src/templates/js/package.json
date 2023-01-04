@@ -32,9 +32,6 @@
     "codegenConfig": {
       "name": "TempNameSpec",
       "type": "modules",
-      "jsSrcsDir": "js",
-      "android": {
-        "javaPackageName": "com.TempName"
-      }
+      "jsSrcsDir": "js"
     }
   }

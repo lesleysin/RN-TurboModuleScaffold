@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TempName : NSObject <TempSpecName>
+@interface TempName : NSObject <NativeTempSpecName>
 
 @end
 
