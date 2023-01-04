@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-const commander = require("commander")
+const commander = require("commander");
+const inquirer = require("inquirer");
+const { exec } = require('child_process');
 const createDir = require("./src/createDir");
 const createTemps = require("./src/createTemplates");
 
@@ -11,8 +13,22 @@ commander
     .command("make <title>")
     .description("Generate boilerplate for turbo module")
     .action((name) => {
-        createDir(name)
-        .then(() => createTemps(name))
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "type",
+                choices: ["Turbo Modules", "Fabric Component"]
+            }
+        ]).then((ans) => {
+            createDir(name)
+            .then(() => createTemps(name, ans.type))
+        })
+    })
+
+commander
+    .command("pod")
+    .action(() => {
+        exec("RCT_NEW_ARCH_ENABLED=1 pod install")
     })
 
 commander.parse(process.argv)
