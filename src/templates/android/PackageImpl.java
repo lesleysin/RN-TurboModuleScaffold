@@ -18,11 +18,26 @@ public class TempNameModule extends NativeTempNameSpec {
         super(context);
     }
 
+    static {
+        try {
+            // Used to load the 'native-lib' library on application startup.
+            System.loadLibrary("cpphf-jni");
+        } catch (Exception ignored) {
+        }
+    }
+
     @Override
     @NonNull
     public String getName() {
         return NAME;
     }
+
+    public static native double nativeMultiply(double a, double b);
+
+    @Override
+    public double turboMultiply(double num1, double num2) {
+        return nativeMultiply(num1, num2);
+     }
 
     @Override
     public void add(double a, double b, Promise promise) {

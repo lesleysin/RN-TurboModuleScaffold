@@ -1,6 +1,6 @@
 {
   "name": "rn-tms",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "React Native Turbo Module Scaffold - utility for creating templates for turbo modules and factory components for React Native",
   "main": "index.js",
   "keywords": [

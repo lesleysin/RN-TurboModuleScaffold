@@ -13,25 +13,33 @@ async function makeManifestFile(packageName) {
     await fs.writeFile(path.join(cwd, packageName, androidMainPath, "AndroidManifest.xml"), editedManifest);
 }
 
-async function makeJavaPackageFile(packageName) {
-    const packageBuffer= await fs.readFile(`${__dirname}/templates/android/PackageTemplate.java`, {encoding: "utf-8"});
+async function makeJavaPackageFile(packageName, data) {
+    const packageBuffer= await fs.readFile(`${__dirname}/templates/android/PackageTemplate.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`, {encoding: "utf-8"});
     const cont = packageBuffer.toString();
-    const data = cont.replace(/TempName/g, packageName);
-    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Package.java`), data);
+    const payload = cont.replace(/TempName/g, packageName);
+    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Package.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), payload);
 }
 
-async function makeJavaPackageImplementationFile(packageName) {
-    const javaModuleBuffer= await fs.readFile(`${__dirname}/templates/android/PackageImpl.java`, {encoding: "utf-8"});
+async function makeJavaPackageImplementationFile(packageName, data) {
+    const javaModuleBuffer= await fs.readFile(`${__dirname}/templates/android/PackageImpl.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`, {encoding: "utf-8"});
     const javaContent = javaModuleBuffer.toString();
-    const data1 = javaContent.replace(/TempName/g, packageName);
-    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Module.java`), data1);
+    const data1 = javaContent.replace(/TempName/g, packageName).replace(/cpphf/g, `${packageName.toLowerCase()}`);
+    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Module.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), data1);
 }
 
 async function makeGradleFile(packageName) {
     const gradlescriptBuffer = await fs.readFile(`${__dirname}/templates/android/build.gradle`);
-    const gradleData = gradlescriptBuffer.toString();
+    const content = gradlescriptBuffer.toString();
+    const gradleData = content.replace(/TempName/g, packageName);
     await fs.writeFile(path.join(cwd, packageName, androidRoot, "build.gradle"), gradleData);
 }
+
+// async function makeKotlinGradleFile(packageName) {
+//     const gradlescriptBuffer = await fs.readFile(`${__dirname}/templates/android/build.gradle`);
+//     const content = gradlescriptBuffer.toString();
+//     const gradleData = content.replace(/TempName/g, packageName);
+//     await fs.writeFile(path.join(cwd, packageName, androidRoot, "build.gradle"), gradleData);
+// }
 
 async function makeFCGradleFile(packageName) {
     const gradlescriptBuffer = await fs.readFile(`${__dirname}/templates/android/buildFC.gradle`);
@@ -50,14 +58,14 @@ async function makeModulePodspecFile(packageName) {
     const podspecBuffer = await fs.readFile(`${__dirname}/templates/ios/PodscecTemplate.podspec`);
     const podspecData = podspecBuffer.toString();
     const data = podspecData.replace(/TempName/g, packageName);
-    await fs.writeFile(path.join(cwd, packageName, `${packageName.toLowerCase()}.podspec`), data);
+    await fs.writeFile(path.join(cwd, packageName, `${packageName}.podspec`), data);
 }
 
 async function makeFCPodspecFile(packageName) {
     const podspecBuffer = await fs.readFile(`${__dirname}/templates/ios/FCPodspecTemp.podspec`);
     const podspecData = podspecBuffer.toString();
     const data = podspecData.replace(/TempName/g, packageName);
-    await fs.writeFile(path.join(cwd, packageName, `${packageName.toLowerCase()}.podspec`), data);
+    await fs.writeFile(path.join(cwd, packageName, `${packageName}.podspec`), data);
 }
 
 async function makePackageJsonFile(packageName, type = "Turbo Modules") {
@@ -82,13 +90,15 @@ async function makeSpecHeaderFile(packageName) {
     const iosSpecHeaderBuffer = await fs.readFile(`${__dirname}/templates/ios/SpecHeader.h`);
     const iosSpecHeaderContent = iosSpecHeaderBuffer.toString();
     const data = iosSpecHeaderContent.replace(/TempSpecName/g, `${packageName}Spec`).replace(/TempName/g, `${packageName}`);
-    await fs.writeFile(path.join(cwd, packageName, "ios", `${packageName}.h`), data);
+    await fs.writeFile(path.join(cwd, packageName, "ios", `${packageName}Header.h`), data);
 }
 
 async function makeObjCModuleImplementationFile(packageName) {
     const objcImplBuffer = await fs.readFile(`${__dirname}/templates/ios/ModuleHeader.mm`);
     const objcImplContent = objcImplBuffer.toString();
-    let objcImpl = objcImplContent.replace(/TempSpecName/g, `${packageName}Spec`).replace(/TempName/g, `${packageName}`);
+    let objcImpl = objcImplContent
+    .replace(/TempName/g, `${packageName}`)
+    .replace(/cpphf/g, `${packageName.toLowerCase()}`);
     await fs.writeFile(path.join(cwd, packageName, "ios", `${packageName}.mm`), objcImpl);
 }
 
@@ -140,24 +150,68 @@ async function makeFCViewManagerFile(packageName) {
     const data = content.replace(/TempName/g, `${packageName}`)
     await fs.writeFile(path.join(cwd, packageName, "ios",`${packageName}Manager.mm`), data);
 }
+
+async function makeCMakeFile(packageName) {
+    const lcName = packageName.toLowerCase();
+    const buffer = await fs.readFile(path.join(__dirname, "templates/android", "CMakeLists.txt"));
+    const content = buffer.toString();
+    const data = content.replace(/TempName/g, `${lcName}`)
+    await fs.writeFile(path.join(cwd, packageName, androidRoot, "CMakeLists.txt"), data);
+}
+
+async function makeCppImplementationFile(packageName) {
+    const lcName = packageName.toLowerCase();
+    const buffer = await fs.readFile(path.join(__dirname, "templates/cxx", "TempName.cpp"));
+    const content = buffer.toString();
+    const data = content.replace(/TempName/g, `${lcName}`)
+    await fs.writeFile(path.join(cwd, packageName, "cpp", `${lcName}.cpp`), data);
+}
+
+async function makeCppHeaderFile(packageName) {
+    const lcName = packageName.toLowerCase();
+    const buffer = await fs.readFile(path.join(__dirname, "templates/cxx", "TempName.h"));
+    const content = buffer.toString();
+    const data = content.replace(/TempName/g, `${lcName}`)
+    await fs.writeFile(path.join(cwd, packageName, "cpp", `${lcName}.h`), data);
+}
+
+async function makeJNIFiles(packageName) {
+    const lcName = packageName.toLowerCase();
+
+    const buffer = await fs.readFile(path.join(__dirname, "templates/cxx", "cpp-adapter.cpp"));
+    const content = buffer.toString();
+    const data = content.replace(/TempName/g, `${packageName}`).replace(/cpphf/g, lcName);
+    
+    const buffer2 = await fs.readFile(path.join(__dirname, "templates/cxx", "log.h")); 
+    const content2 = buffer2.toString();
+    const data2 = content2.replace(/TempName/g, `${lcName}`);
+
+    await fs.writeFile(path.join(cwd, packageName, androidMainPath, "jni", "cpp-adapter.cpp"), data);
+    await fs.writeFile(path.join(cwd, packageName, androidMainPath, "jni", "log.h"), data2);
+}
 //#endregion
 
-async function createTemps(packageName, type) {
+async function createTemps(packageName, data) {
     //default generated files
     await makeManifestFile(packageName);
-    await makePackageJsonFile(packageName, type);
+    await makePackageJsonFile(packageName, data.type);
+    //cpp
+    await makeCppImplementationFile(packageName);
+    await makeCppHeaderFile(packageName);
+    await makeJNIFiles(packageName);
     
-    if (type === "Turbo Modules") {
+    if (data.type === "Turbo Modules") {
         //!js
         await makeJsModuleSpecFile(packageName);
 
         //!android
         await makeGradleFile(packageName);
-        await makeJavaPackageFile(packageName);
-        await makeJavaPackageImplementationFile(packageName);
-        await makeModulePodspecFile(packageName);
-
+        await makeJavaPackageFile(packageName, data);
+        await makeJavaPackageImplementationFile(packageName, data);
+        await makeCMakeFile(packageName);
+        
         //!ios
+        await makeModulePodspecFile(packageName);
         await makeSpecHeaderFile(packageName);
         await makeObjCModuleImplementationFile(packageName);
     } else {
