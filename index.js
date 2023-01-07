@@ -18,10 +18,15 @@ commander
                 type: "list",
                 name: "type",
                 choices: ["Turbo Modules", "Fabric Component"]
+            },
+            {
+                type: "list",
+                name: "AndroidLang",
+                choices: ["Java", "Kotlin"]
             }
         ]).then((ans) => {
             createDir(name)
-            .then(() => createTemps(name, ans.type))
+            .then(() => createTemps(name, ans))
         })
     })
 

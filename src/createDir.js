@@ -7,12 +7,16 @@ async function createDir(packageName) {
 
     //android
     await fs.mkdir(path.join(cwd, packageName, androidPath, packageName.toLowerCase()), { recursive: true });
+    await fs.mkdir(path.join(cwd, packageName, "android", "src", "main", "jni"), { recursive: true });
 
     //ios
     await fs.mkdir(path.join(cwd, packageName, "ios"), { recursive: true });
 
     //js
     await fs.mkdir(path.join(cwd, packageName, "js"), { recursive: true });
+
+    //cxx
+    await fs.mkdir(path.join(cwd, packageName, "cpp"), { recursive: true });
     
 }
 

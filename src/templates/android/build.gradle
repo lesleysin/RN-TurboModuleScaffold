@@ -12,12 +12,67 @@ buildscript {
   }
 }
 
+def isNewArchitectureEnabled() {
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.facebook.react'
 apply plugin: 'kotlin-android'
 
 android {
   compileSdkVersion safeExtGet('compileSdkVersion', 31)
+
+   if (System.properties['os.arch'] == "aarch64") {
+            // For M1 Users we need to use the NDK 24 which added support for aarch64
+            ndkVersion = "24.0.8215888"
+        } else {
+            // Otherwise we default to the side-by-side NDK version from AGP.
+            ndkVersion = "21.4.7075529"
+        }
+  
+  defaultConfig {
+        externalNativeBuild {
+            cmake {
+                cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
+                arguments "-DCMAKE_VERBOSE_MAKEFILE=1"
+                cppFlags "-std=c++17"
+            }
+        }
+    }
+  
+  externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+	        // pin cmake version to support M1 machines
+            version '3.22.1'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        disable 'GradleCompatible'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets.main {
+        java {
+            if (!isNewArchitectureEnabled()) {
+                srcDirs += [
+                    "build/generated/source/codegen/java"
+                ]
+            }
+        }
+    }
 }
 
 repositories {
@@ -32,3 +87,14 @@ repositories {
 dependencies {
   implementation 'com.facebook.react:react-native:+'
 }
+
+
+ if (isNewArchitectureEnabled()) {
+     react {
+         libraryName = "TempName"
+         codegenJavaPackageName = "com.TempName"
+         jsRootDir = file("../src/")
+         reactRoot = rootProject.file("../node_modules/react-native/")
+         codegenDir = rootProject.file("../node_modules/react-native-codegen/")
+  }
+ }
