@@ -4,7 +4,7 @@ Utility for creating templates for turbo modules and factory components for Reac
 ## Features
 - React Native 0.68 +
 - Generation of templates for turbo modules and factory components with one command
-- Java and Kotlin support for Android development (kotlin only Turbo modules for now)
+- Java and Kotlin support for Android development
 - Obc-C support for IOS development
 - C++ crossplatform modules support (Turbo modules only)
 
