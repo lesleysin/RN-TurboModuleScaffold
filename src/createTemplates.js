@@ -27,10 +27,10 @@ async function makeJavaPackageImplementationFile(packageName, data) {
     await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Module.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), data1);
 }
 
-async function makeGradleFile(packageName) {
+async function makeGradleFile(packageName, data) {
     const gradlescriptBuffer = await fs.readFile(`${__dirname}/templates/android/build.gradle`);
     const content = gradlescriptBuffer.toString();
-    const gradleData = content.replace(/TempName/g, packageName);
+    const gradleData = content.replace(/TempName/g, packageName).replace("PROJECT_TYPE", data.type === "Turbo Modules" ? "TM" : "FC");
     await fs.writeFile(path.join(cwd, packageName, androidRoot, "build.gradle"), gradleData);
 }
 
@@ -109,25 +109,25 @@ async function makeNativePropsDefFile(packageName) {
     await fs.writeFile(path.join(cwd, packageName, "js", `${packageName}NativeComponent.ts`), value);
 }
 
-async function makeViewManagerFile(packageName) {
-    const buffer = await fs.readFile(`${__dirname}/templates/android/RNManager.java`);
+async function makeViewManagerFile(packageName, data) {
+    const buffer = await fs.readFile(`${__dirname}/templates/android/FCManager.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`);
     const content = buffer.toString();
-    const data = content.replace(/TempName/g, `${packageName}`)
-    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Manager.java`), data);
+    const payload = content.replace(/TempName/g, `${packageName}`)
+    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Manager.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), payload);
 }
 
-async function makeFCViewFile(packageName) {
-    const buffer = await fs.readFile(`${__dirname}/templates/android/FCViewTemplate.java`);
+async function makeFCViewFile(packageName, data) {
+    const buffer = await fs.readFile(`${__dirname}/templates/android/FCViewTemplate.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`);
     const content = buffer.toString();
-    const data = content.replace(/TempName/g, `${packageName}`)
-    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}.java`), data);
+    const payload = content.replace(/TempName/g, `${packageName}`)
+    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), payload);
 }
 
-async function makeFCPackageFile(packageName) {
-    const buffer = await fs.readFile(`${__dirname}/templates/android/FCPackage.java`);
+async function makeFCPackageFile(packageName, data) {
+    const buffer = await fs.readFile(`${__dirname}/templates/android/FCPackage.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`);
     const content = buffer.toString();
-    const data = content.replace(/TempName/g, `${packageName}`)
-    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Package.java`), data);
+    const payload = content.replace(/TempName/g, `${packageName}`)
+    await fs.writeFile(path.join(cwd, packageName, androidPackagePath, packageName.toLowerCase(),`${packageName}Package.${data.AndroidLang === "Kotlin" ? "kt" : "java"}`), payload);
 }
 
 async function makeFCHeaderFile(packageName) {
@@ -193,22 +193,24 @@ async function makeJNIFiles(packageName) {
 
 async function createTemps(packageName, data) {
     //default generated files
-    await makeManifestFile(packageName);
+    await makeCMakeFile(packageName);
     await makePackageJsonFile(packageName, data.type);
-    //cpp
-    await makeCppImplementationFile(packageName);
-    await makeCppHeaderFile(packageName);
-    await makeJNIFiles(packageName);
+
+    //android
+    await makeManifestFile(packageName);
+    await makeGradleFile(packageName, data);
     
     if (data.type === "Turbo Modules") {
+        //!cpp
+        await makeJNIFiles(packageName);
+        await makeCppImplementationFile(packageName);
+        await makeCppHeaderFile(packageName);
         //!js
         await makeJsModuleSpecFile(packageName);
 
         //!android
-        await makeGradleFile(packageName);
         await makeJavaPackageFile(packageName, data);
         await makeJavaPackageImplementationFile(packageName, data);
-        await makeCMakeFile(packageName);
         
         //!ios
         await makeModulePodspecFile(packageName);
@@ -219,10 +221,9 @@ async function createTemps(packageName, data) {
         await makeNativePropsDefFile(packageName)
 
         //! android
-        await makeViewManagerFile(packageName);
-        await makeFCViewFile(packageName);
-        await makeFCGradleFile(packageName);
-        await makeFCPackageFile(packageName);
+        await makeViewManagerFile(packageName, data);
+        await makeFCViewFile(packageName, data);
+        await makeFCPackageFile(packageName, data);
 
         //!ios
         await makeFCPodspecFile(packageName);

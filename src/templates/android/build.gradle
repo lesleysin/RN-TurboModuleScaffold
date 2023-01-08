@@ -16,6 +16,14 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
+def checkProjectType() {
+  if ("PROJECT_TYPE" == "TM") {
+    return true
+  } else {
+    return false
+  }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.facebook.react'
 apply plugin: 'kotlin-android'
@@ -32,15 +40,22 @@ android {
         }
   
   defaultConfig {
-        externalNativeBuild {
-            cmake {
-                cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
-                arguments "-DCMAKE_VERBOSE_MAKEFILE=1"
-                cppFlags "-std=c++17"
-            }
+        buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true")
+        minSdkVersion safeExtGet('minSdkVersion', 21)
+        targetSdkVersion safeExtGet('targetSdkVersion', 31)
+        if (checkProjectType()) {
+            externalNativeBuild {
+              cmake {
+                  path "CMakeLists.txt"
+	                // pin cmake version to support M1 machines
+                  version '3.22.1'
         }
     }
+  }
+    }
+
   
+  if (checkProjectType()) {
   externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
@@ -48,6 +63,8 @@ android {
             version '3.22.1'
         }
     }
+  }
+
 
     buildTypes {
         release {
@@ -91,8 +108,8 @@ dependencies {
 
  if (isNewArchitectureEnabled()) {
      react {
-         libraryName = "TempName"
-         codegenJavaPackageName = "com.TempName"
+         libraryName = "RTNFC"
+         codegenJavaPackageName = "com.RTNFC"
          jsRootDir = file("../src/")
          reactRoot = rootProject.file("../node_modules/react-native/")
          codegenDir = rootProject.file("../node_modules/react-native-codegen/")
