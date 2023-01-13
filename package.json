@@ -3,6 +3,9 @@
   "version": "1.2.0",
   "description": "React Native Turbo Module Scaffold - utility for creating templates for turbo modules and factory components for React Native",
   "main": "index.js",
+  "files": [
+    "src/templates"
+  ],
   "keywords": [
     "React Native",
     "scaffold",
@@ -13,6 +16,7 @@
   "author": "lesleysin",
   "license": "MIT",
   "dependencies": {
+    "chalk": "4.1.2",
     "commander": "^9.4.1",
     "inquirer": "^8.1.4"
   },
