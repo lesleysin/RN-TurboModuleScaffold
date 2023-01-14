@@ -1,7 +1,10 @@
-#import "TempNameSpec.h"
 #import "TempName.h"
-
 #include "cpphf.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "TempNameSpec.h"
+#endif
+
 
 @implementation TempName
 
@@ -18,10 +21,12 @@ RCT_EXPORT_MODULE()
     return [NSNumber numberWithDouble:res];
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
     return std::make_shared<facebook::react::NativeTempNameSpecJSI>(params);
 }
+#endif
 
 @end

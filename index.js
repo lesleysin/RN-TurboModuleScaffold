@@ -36,6 +36,8 @@ const cxxModuleDir = path.resolve(__dirname, "src/templates/cxx-module");
 
 const commonModuleSourceDir = path.resolve(__dirname, "src/templates/common/module");
 const commonFCSourceDir = path.resolve(__dirname, "src/templates/common/fc");
+const commonCompatModuleSourceDir = path.resolve(__dirname, "src/templates/common/module-compat");
+const commonCompatFCSourceDir = path.resolve(__dirname, "src/templates/common/fc-compat");
 
 commander
   .version('1.2.0')
@@ -93,14 +95,14 @@ commander
 
             if (!compat) {
                 console.log()
-                console.info(chalk.red("Create imcompatible module :("));
+                console.info(chalk.redBright("Create imcompatible module :("));
                 if (type === "TM") { //ANCHOR - TM
                     console.log()
-                    console.info(chalk.green("Create TURBO MODULE template"));
+                    console.info(chalk.green("Create TURBO MODULE template..."));
                     switch (androidLang) {
                         case "J": {
                             console.log()
-                            console.info(chalk.green("Configure java files"));
+                            console.info(chalk.green("Create java source files..."));
                             fs.cp(javaModuleDir, awd, { force: true, recursive: true })
                             .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
                             .then(async () => {
@@ -126,7 +128,7 @@ commander
                         }
                         case "KT": {
                             console.log()
-                            console.info("Configure kotlin files");
+                            console.info(chalk.green("Create kotlin source files..."));
                             fs.cp(kotlinModuleDir, awd, { force: true, recursive: true })
                             .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
                             .then(async () => {
@@ -156,7 +158,7 @@ commander
                     }
     
                     console.log()
-                    console.info("Configure c++ files");
+                    console.info(chalk.green("Create C++ source files..."));
                     await fs.cp(cxxModuleDir, cxxwd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
@@ -176,16 +178,16 @@ commander
                     })
 
                     console.log()
-                    console.info("Configure Obj-C files");
+                    console.info(chalk.green("Create Obj-C source files..."));
                     await fs.cp(objcModuleDir, ioswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
-                        for await (const file of getFiles(cxxwd)) {
+                        for await (const file of getFiles(ioswd)) {
                             targetFiles.push(file);
                         }
 
                         targetFiles.forEach(async (file) => {
-                            const newName = file.replace(/TempName/g, packageName.toLowerCase());
+                            const newName = file.replace(/TempName/g, packageName);
                             
                             const buffer = await fs.readFile(file);
                             const content = buffer.toString();
@@ -196,7 +198,7 @@ commander
                     });
 
                     console.log()
-                    console.info("Configure package files");
+                    console.info(chalk.green("Set the package configuration..."));
                     await fs.cp(commonModuleSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
                     .then(async () => {
                         const list = await fs.readdir(rootDir);
@@ -217,7 +219,7 @@ commander
                     })
 
                     console.log()
-                    console.info("Configure JS interfaces");
+                    console.info(chalk.green("Generating JS interfaces..."));
                     await fs.cp(jsModuleDir, jswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
@@ -237,11 +239,11 @@ commander
                     });
                 } else { //ANCHOR - FC
                     console.log()
-                    console.info("Create FABRIC COMPONENT template");
+                    console.info(chalk.green("Create Fabric Component template"));
                     switch (androidLang) {
                         case "J": {
                             console.log()
-                            console.info("Create java files");
+                            console.info(chalk.green("Create java source files..."));
                             fs.cp(javaFCDir, awd, { force: true, recursive: true })
                             .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
                             .then(async () => {
@@ -267,7 +269,7 @@ commander
                         }
                         case "KT": {
                             console.log()
-                            console.info("Create kotlin files");
+                            console.info(chalk.green("Create kotlin source files..."));
                             fs.cp(kotlinFCDir, awd, { force: true, recursive: true })
                             .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
                             .then(async () => {
@@ -296,9 +298,9 @@ commander
                         }
                     }
                     console.log()
-                    console.info(chalk.yellowBright("Skip C++ lang comfiguration for this case"));
+                    console.info(chalk.yellowBright("Skip C++ lang configuration for this case"));
                     console.log()
-                    console.info("Configure Obj-C files");
+                    console.info(chalk.green("Create Obj-C source files"));
                     await fs.cp(objcFCDir, ioswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
@@ -317,7 +319,8 @@ commander
                         })
                     });
 
-                    console.info("Configure package files");
+                    console.log()
+                    console.info(chalk.green(""));
                     await fs.cp(commonFCSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
                     .then(async () => {
                         const list = await fs.readdir(rootDir);
@@ -337,8 +340,7 @@ commander
                         })
                     })
                     console.info()
-                    console.info("Configure JS interfaces");
-                    console.info()
+                    console.info(chalk.green("Generating JS interfaces..."));
                     await fs.cp(jsFCDir, jswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
@@ -358,8 +360,128 @@ commander
                     })
                 }
             } else {
-               
+                console.log()
+                console.info(chalk.cyanBright("Create backward compatible module :)"));
+                if (type === "TM") { //ANCHOR - Backward compatible TM
+                    switch (androidLang) {
+                        case "J": {
+                            console.log()
+                            console.info(chalk.green("Create java source files..."));
+                            fs.cp(javaCompatModuleDir, awd, { force: true, recursive: true })
+                            .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
+                            .then(() => fs.rename(path.resolve(awd, "src/newarch/java/com/TempName"), path.resolve(awd, `src/newarch/java/com/${packageName}`)))
+                            .then(() => fs.rename(path.resolve(awd, "src/oldarch/java/com/TempName"), path.resolve(awd, `src/oldarch/java/com/${packageName}`)))
+                            .then(async () => {
+                                for await (const file of getFiles(path.resolve(awd, `src`))) {
+                                    const newName = file.replace(/TempName/g, packageName);
+                                    fs.rename(file, newName);
+                                }
+                            })
+                            .then(async () => {
+                                const targetFiles = [];
+                                for await (const file of getFiles(awd)) {
+                                    targetFiles.push(file);
+                                }
+    
+                                targetFiles.forEach(async (file) => {
+                                    const buffer = await fs.readFile(file);
+                                    const content = buffer.toString();
+                                    const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+                                    await fs.writeFile(file, payload);
+                                })
+                            })
+                        break;
+                    }
+                        
+                    default:
+                        break;
+                }
+               }
+
+               //!
+               console.log()
+                    console.info(chalk.green("Create C++ source files..."));
+                    await fs.cp(cxxModuleDir, cxxwd, { force: true, recursive: true })
+                    .then(async () => {
+                        const targetFiles = [];
+                        for await (const file of getFiles(cxxwd)) {
+                            targetFiles.push(file);
+                        }
+
+                        targetFiles.forEach(async (file) => {
+                            const newName = file.replace(/TempName/g, packageName.toLowerCase());
+                            
+                            const buffer = await fs.readFile(file);
+                            const content = buffer.toString();
+                            const payload = content.replace(/TempName/g, packageName.toLowerCase());
+                            await fs.writeFile(file, payload);
+                            await fs.rename(file, newName);
+                        })
+                    })
+
+                    console.log()
+                    console.info(chalk.green("Create Obj-C source files..."));
+                    await fs.cp(objcModuleDir, ioswd, { force: true, recursive: true })
+                    .then(async () => {
+                        const targetFiles = [];
+                        for await (const file of getFiles(ioswd)) {
+                            targetFiles.push(file);
+                        }
+
+                        targetFiles.forEach(async (file) => {
+                            const newName = file.replace(/TempName/g, packageName.toLowerCase());
+                            
+                            const buffer = await fs.readFile(file);
+                            const content = buffer.toString();
+                            const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+                            await fs.writeFile(file, payload);
+                            await fs.rename(file, newName);
+                        })
+                    });
+
+                    console.log()
+                    console.info(chalk.green("Set the package configuration..."));
+                    await fs.cp(commonModuleSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
+                    .then(async () => {
+                        const list = await fs.readdir(rootDir);
+                        const data = list.filter((val) => val.includes("."));
+                        data.forEach(async (fileName) => {
+                            const target = path.resolve(rootDir, fileName);
+                            
+                            const buffer = await fs.readFile(target);
+                            const content = buffer.toString();
+                            const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+                            await fs.writeFile(target, payload);
+                            
+                            if (!fileName.includes(".json")) {
+                                const newName = target.replace(/TempName/g, packageName)
+                                await fs.rename(target, newName);
+                            }
+                        })
+                    })
+
+                    console.log()
+                    console.info(chalk.green("Generating JS interfaces..."));
+                    await fs.cp(jsModuleDir, jswd, { force: true, recursive: true })
+                    .then(async () => {
+                        const targetFiles = [];
+                        for await (const file of getFiles(cxxwd)) {
+                            targetFiles.push(file);
+                        }
+
+                        targetFiles.forEach(async (file) => {
+                            const newName = file.replace(/TempName/g, packageName);
+                            
+                            const buffer = await fs.readFile(file);
+                            const content = buffer.toString();
+                            const payload = content.replace(/TempName/g, packageName);
+                            await fs.writeFile(file, payload);
+                            await fs.rename(file, newName);
+                        })
+                    });
+                    //!
             }
+            console.log()
             console.info(chalk.green.bold("Project files configuration completed successfully!"));
         })
     })
