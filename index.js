@@ -223,7 +223,7 @@ commander
                     await fs.cp(jsModuleDir, jswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
-                        for await (const file of getFiles(cxxwd)) {
+                        for await (const file of getFiles(jswd)) {
                             targetFiles.push(file);
                         }
 
@@ -429,7 +429,7 @@ commander
                         }
 
                         targetFiles.forEach(async (file) => {
-                            const newName = file.replace(/TempName/g, packageName.toLowerCase());
+                            const newName = file.replace(/TempName/g, packageName);
                             
                             const buffer = await fs.readFile(file);
                             const content = buffer.toString();
@@ -441,7 +441,7 @@ commander
 
                     console.log()
                     console.info(chalk.green("Set the package configuration..."));
-                    await fs.cp(commonModuleSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
+                    await fs.cp(commonCompatModuleSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
                     .then(async () => {
                         const list = await fs.readdir(rootDir);
                         const data = list.filter((val) => val.includes("."));
@@ -465,7 +465,7 @@ commander
                     await fs.cp(jsModuleDir, jswd, { force: true, recursive: true })
                     .then(async () => {
                         const targetFiles = [];
-                        for await (const file of getFiles(cxxwd)) {
+                        for await (const file of getFiles(jswd)) {
                             targetFiles.push(file);
                         }
 
