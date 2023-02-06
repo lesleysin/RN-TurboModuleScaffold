@@ -81,10 +81,10 @@ dependencies {
 
  if (isNewArchitectureEnabled()) {
      react {
-         libraryName = "RTNFC"
-         codegenJavaPackageName = "com.RTNFC"
+         libraryName = "TempName"
+         codegenJavaPackageName = "com.TempName"
          jsRootDir = file("../src/")
-         reactRoot = rootProject.file("../node_modules/react-native/")
+         reactNativeDir = rootProject.file("../node_modules/react-native/")
          codegenDir = rootProject.file("../node_modules/react-native-codegen/")
   }
  }
