@@ -4,6 +4,7 @@
     "description": "YOUR_DESCRIPTION",
     "react-native": "js/index",
     "source": "js/index",
+    "main": "./js/index.ts",
     "files": [
       "js",
       "android",

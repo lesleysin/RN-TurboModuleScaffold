@@ -11,27 +11,20 @@ import com.TempName.impl.TempNameModuleImpl;
 import java.util.Map;
 import java.util.HashMap;
 
-public class TempNameModule extends NativeTempNameSpec {
-    private TempNameModuleImpl implementation;
+public class TempNameModule(ctx: ReactApplicationContext) : ReactContextBaseJavaModule(ctx) {
+    val implementation: TempNameModuleImpl = TempNameModuleImpl();
 
-    TempNameModule(ReactApplicationContext context) {
-        super(context);
-        implementation = new TempNameModuleImpl();
-    }
-
-    @Override
-    @NonNull
-    public String getName() {
+    override fun getName(): String {
         return TempNameModuleImpl.NAME;
     }
 
-    @Override
-    public double turboMultiply(double num1, double num2) {
+    @ReactMethod
+    fun turboMultiply(num1: Double, num2: Double): Double {
         return implementation.turboMultiply(num1, num2);
     }
 
-    @Override
-    public void add(double a, double b, Promise promise) {
+    @ReactMethod
+    fun add(a: Double, b: Double, promise: Promise): Unit {
         implementation.add(a, b, promise);
     }
 }

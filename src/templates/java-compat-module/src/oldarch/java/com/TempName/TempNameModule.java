@@ -7,14 +7,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.TempName.impl.TempNameModuleImpl;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.TempName.impl;
-
 public class TempNameModule extends ReactContextBaseJavaModule {
-    private TempNameModuleImpl implementation
-    public static String NAME = "TempName";
+    private TempNameModuleImpl implementation;
 
     TempNameModule(ReactApplicationContext context) {
         super(context);

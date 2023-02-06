@@ -1,10 +1,10 @@
-#import "TempName.h"
-#include "cpphf.h"
+#import "TempNameHeader.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "TempNameSpec.h"
 #endif
 
+#include "cpphf.h"
 
 @implementation TempName
 

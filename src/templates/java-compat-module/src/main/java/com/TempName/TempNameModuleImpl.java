@@ -12,11 +12,7 @@ import java.util.HashMap;
 
 public class TempNameModuleImpl {
 
-    public static String NAME = "TempName";
-
-    TempNameModule(ReactApplicationContext context) {
-        super(context);
-    }
+    public static final String NAME = "TempName";
 
     static {
         try {
@@ -24,10 +20,6 @@ public class TempNameModuleImpl {
             System.loadLibrary("cpphf-jni");
         } catch (Exception ignored) {
         }
-    }
-
-    public String getName() {
-        return NAME;
     }
 
     public static native double nativeMultiply(double a, double b);

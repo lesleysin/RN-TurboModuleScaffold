@@ -392,7 +392,35 @@ commander
                             })
                         break;
                     }
-                        
+                        case "KT": {
+                            console.log()
+                            console.info(chalk.green("Create kotlin source files..."));
+                            fs.cp(kotlinCompatModuleDir, awd, { force: true, recursive: true })
+                            .then(() => fs.rename(path.resolve(awd, "src/main/java/com/TempName"), path.resolve(awd, `src/main/java/com/${packageName}`)))
+                            .then(() => fs.rename(path.resolve(awd, "src/newarch/java/com/TempName"), path.resolve(awd, `src/newarch/java/com/${packageName}`)))
+                            .then(() => fs.rename(path.resolve(awd, "src/oldarch/java/com/TempName"), path.resolve(awd, `src/oldarch/java/com/${packageName}`)))
+                            .then(async () => {
+                                for await (const file of getFiles(path.resolve(awd, `src`))) {
+                                    const newName = file.replace(/TempName/g, packageName);
+                                    fs.rename(file, newName);
+                                }
+                            })
+                            .then(async () => {
+                                const targetFiles = [];
+                                for await (const file of getFiles(awd)) {
+                                    targetFiles.push(file);
+                                }
+    
+                                targetFiles.forEach(async (file) => {
+                                    const buffer = await fs.readFile(file);
+                                    const content = buffer.toString();
+                                    const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+                                    await fs.writeFile(file, payload);
+                                })
+                            })
+                        break;
+                    }
+
                     default:
                         break;
                 }

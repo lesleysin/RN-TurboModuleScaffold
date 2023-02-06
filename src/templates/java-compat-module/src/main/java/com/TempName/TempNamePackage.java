@@ -7,6 +7,8 @@ import com.facebook.react.module.model.ReactModuleInfoProvider;
 import com.facebook.react.TurboReactPackage;
 import com.facebook.react.module.model.ReactModuleInfo;
 
+import com.TempName.impl.TempNameModuleImpl;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ public class TempNamePackage extends TurboReactPackage {
     @Nullable
     @Override
     public NativeModule getModule(String name, ReactApplicationContext reactContext) {
-        if (name.equals(TempNameModule.NAME)) {
+        if (name.equals(TempNameModuleImpl.NAME)) {
             return new TempNameModule(reactContext);
         } else {
             return null;
@@ -29,10 +31,10 @@ public class TempNamePackage extends TurboReactPackage {
         return () -> {
                 final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
                     moduleInfos.put(
-                        TempNameModule.NAME,
+                        TempNameModuleImpl.NAME,
                         new ReactModuleInfo(
-                        TempNameModule.NAME,
-                        TempNameModule.NAME,
+                        TempNameModuleImpl.NAME,
+                        TempNameModuleImpl.NAME,
                         false, // canOverrideExistingModule
                         false, // needsEagerInit
                         true, // hasConstants
