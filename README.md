@@ -7,9 +7,7 @@ Utility for creating templates for turbo modules and factory components for Reac
 - Java and Kotlin support for Android development
 - Obc-C support for IOS development
 - C++ crossplatform modules support (Turbo modules only)
-
-## Known limitations
-Backward compatibility testing of the new and old architecture has not been performed. Stable operation is guaranteed only when using the new React Native architecture.
+- Generating of backward compatible modules and components
 
 ## Instalation
 ```
