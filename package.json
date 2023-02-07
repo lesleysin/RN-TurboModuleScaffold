@@ -15,6 +15,9 @@
   ],
   "author": "lesleysin",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint"
+  },
   "dependencies": {
     "chalk": "4.1.2",
     "commander": "^9.4.1",
@@ -27,5 +30,8 @@
   },
   "bugs": {
     "url": "https://github.com/lesleysin/RN-TurboModuleScaffold/issues"
+  },
+  "devDependencies": {
+    "eslint": "^8.33.0"
   }
 }

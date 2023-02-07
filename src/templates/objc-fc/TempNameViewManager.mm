@@ -9,6 +9,11 @@
 
 RCT_EXPORT_MODULE(TempName)
 
+- (UIView *)view
+{
+  return [[UIView alloc] init];
+}
+
 RCT_EXPORT_VIEW_PROPERTY(text, NSString)
 
 @end

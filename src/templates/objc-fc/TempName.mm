@@ -1,3 +1,4 @@
+#ifdef RCT_NEW_ARCH_ENABLED
 #import "TempName.h"
 
 #import <react/renderer/components/TempNameSpecs/ComponentDescriptors.h>
@@ -69,3 +70,5 @@ Class<RCTComponentViewProtocol> TempNameCls(void)
 {
   return TempName.class;
 }
+
+#endif
