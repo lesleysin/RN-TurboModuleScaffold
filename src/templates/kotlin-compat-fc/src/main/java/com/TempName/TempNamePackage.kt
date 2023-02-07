@@ -9,7 +9,7 @@ import java.util.ArrayList
 class TempNamePackage : ReactPackage {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
-    viewManagers.add(TempNameViewManager())
+    viewManagers.add(TempNameViewManager(reactContext))
     return viewManagers
   }
 

@@ -81,7 +81,7 @@ commander
 			{
 				type: "confirm",
 				name: "compat",
-				default: false,
+				default: true,
 				message: "Support backward compatibility?",
 			}
 		]).then(async (ans) => {
@@ -569,68 +569,68 @@ commander
 					default:
 						break;
 					}
-				}
 
-				console.log()
-				console.info(chalk.green("Create Obj-C source files..."));
-				await fs.cp(objcFCDir, ioswd, { force: true, recursive: true })
-					.then(async () => {
-						const targetFiles = [];
-						for await (const file of getFiles(ioswd)) {
-							targetFiles.push(file);
-						}
-
-						targetFiles.forEach(async (file) => {
-							const newName = file.replace(/TempName/g, packageName);
-                       
-							const buffer = await fs.readFile(file);
-							const content = buffer.toString();
-							const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
-							await fs.writeFile(file, payload);
-							await fs.rename(file, newName);
-						})
-					});
-
-				console.log()
-				console.info(chalk.green("Set the package configuration..."));
-				await fs.cp(commonCompatFCSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
-					.then(async () => {
-						const list = await fs.readdir(rootDir);
-						const data = list.filter((val) => val.includes("."));
-						data.forEach(async (fileName) => {
-							const target = path.resolve(rootDir, fileName);
-                       
-							const buffer = await fs.readFile(target);
-							const content = buffer.toString();
-							const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
-							await fs.writeFile(target, payload);
-                       
-							if (!fileName.includes(".json")) {
-								const newName = target.replace(/TempName/g, packageName)
-								await fs.rename(target, newName);
+					console.log()
+					console.info(chalk.green("Create Obj-C source files..."));
+					await fs.cp(objcFCDir, ioswd, { force: true, recursive: true })
+						.then(async () => {
+							const targetFiles = [];
+							for await (const file of getFiles(ioswd)) {
+								targetFiles.push(file);
 							}
-						})
-					})
 
-				console.log()
-				console.info(chalk.green("Generating JS interfaces..."));
-				await fs.cp(jsFCDir, jswd, { force: true, recursive: true })
-					.then(async () => {
-						const targetFiles = [];
-						for await (const file of getFiles(jswd)) {
-							targetFiles.push(file);
-						}
-
-						targetFiles.forEach(async (file) => {
-							const newName = file.replace(/TempName/g, packageName);
+							targetFiles.forEach(async (file) => {
+								const newName = file.replace(/TempName/g, packageName);
                        
-							const buffer = await fs.readFile(file);
-							const content = buffer.toString();
-							const payload = content.replace(/TempName/g, packageName);
-							await fs.writeFile(file, payload);
-							await fs.rename(file, newName);
+								const buffer = await fs.readFile(file);
+								const content = buffer.toString();
+								const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+								await fs.writeFile(file, payload);
+								await fs.rename(file, newName);
+							})
+						});
+
+					console.log()
+					console.info(chalk.green("Set the package configuration..."));
+					await fs.cp(commonCompatFCSourceDir, path.resolve(cwd, packageName), { force: true, recursive: true })
+						.then(async () => {
+							const list = await fs.readdir(rootDir);
+							const data = list.filter((val) => val.includes("."));
+							data.forEach(async (fileName) => {
+								const target = path.resolve(rootDir, fileName);
+                       
+								const buffer = await fs.readFile(target);
+								const content = buffer.toString();
+								const payload = content.replace(/TempName/g, packageName).replace(/cpphf/g, packageName.toLowerCase());
+								await fs.writeFile(target, payload);
+                       
+								if (!fileName.includes(".json")) {
+									const newName = target.replace(/TempName/g, packageName)
+									await fs.rename(target, newName);
+								}
+							})
 						})
-					});
+
+					console.log()
+					console.info(chalk.green("Generating JS interfaces..."));
+					await fs.cp(jsFCDir, jswd, { force: true, recursive: true })
+						.then(async () => {
+							const targetFiles = [];
+							for await (const file of getFiles(jswd)) {
+								targetFiles.push(file);
+							}
+
+							targetFiles.forEach(async (file) => {
+								const newName = file.replace(/TempName/g, packageName);
+                       
+								const buffer = await fs.readFile(file);
+								const content = buffer.toString();
+								const payload = content.replace(/TempName/g, packageName);
+								await fs.writeFile(file, payload);
+								await fs.rename(file, newName);
+							})
+						});
+				}
 
 			} 
 			//end compat section

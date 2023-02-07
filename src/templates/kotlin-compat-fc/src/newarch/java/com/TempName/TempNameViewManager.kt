@@ -12,7 +12,7 @@ import com.facebook.react.viewmanagers.TempNameManagerDelegate
 import com.TempName.*
 
 @ReactModule(name = TempNameViewManagerImpl.NAME)
-class TempNameViewManager : SimpleViewManager<TempName>(),
+class TempNameViewManager(var ctx: ReactApplicationContext) : SimpleViewManager<TempName>(),
 TempNameManagerInterface<TempName> {
   private val mDelegate: ViewManagerDelegate<TempName>
 
