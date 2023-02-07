@@ -23,7 +23,7 @@ In app directory run this command and answer a few questions
 > RTN stands for "React Native", and is a recommended prefix for React Native modules.
 
 ```
-rn-tms make RTN_MODULE_NAME
+yarn rn-tms make RTN_MODULE_NAME
 ```
 After its execution, a directory with files for native platforms and a js part will be generated in work directory.
 
