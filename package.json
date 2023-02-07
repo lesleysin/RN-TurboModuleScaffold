@@ -1,8 +1,11 @@
 {
   "name": "rn-tms",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "React Native Turbo Module Scaffold - utility for creating templates for turbo modules and factory components for React Native",
   "main": "index.js",
+  "files": [
+    "src/templates"
+  ],
   "keywords": [
     "React Native",
     "scaffold",
@@ -12,7 +15,11 @@
   ],
   "author": "lesleysin",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint"
+  },
   "dependencies": {
+    "chalk": "4.1.2",
     "commander": "^9.4.1",
     "inquirer": "^8.1.4"
   },
@@ -23,5 +30,8 @@
   },
   "bugs": {
     "url": "https://github.com/lesleysin/RN-TurboModuleScaffold/issues"
+  },
+  "devDependencies": {
+    "eslint": "^8.33.0"
   }
 }
