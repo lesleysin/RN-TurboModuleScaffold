@@ -18,6 +18,19 @@ async function* getFiles(dir) {
 	}
 }
 
+async function findModuleDirInNM(rootDir, target) {
+	const dirents = await fs.readdir(rootDir, { withFileTypes: true });
+	for (const dirent of dirents) {
+		if (dirent.name === target ) {
+			return path.resolve(rootDir, dirent.name)
+		} else {
+			continue
+		}
+	}
+
+	return null;
+}
+
 const javaCompatModuleDir = path.resolve(__dirname, "src/templates/java-compat-module");
 const javaModuleDir = path.join(__dirname, "src/templates/java-module");
 const kotlinCompatModuleDir = path.resolve(__dirname, "src/templates/kotlin-compat-module");
@@ -638,5 +651,57 @@ commander
 			console.info(chalk.green.bold("Project files configuration completed successfully!"));
 		})
 	})
+
+commander
+	.command("sync <module>")
+	.description("Sync node modules with target")
+	.option("-a, --android", "sync Android dir")
+	.option("-i, --ios", "sync IOS target")
+	.option("-p, --path <path>", "relative path to module location")
+	.action(async (name, options) => {
+		const {ios, android, path: moduleLocation} = options;
+		
+		if (ios && android) {
+			throw new Error(chalk.red("Cannot sync 2 targets"))
+		}
+
+		if (!ios && !android) {
+			throw new Error(chalk.red("Cannot run command without target platform"))
+		}
+
+		if (ios) {
+			throw new Error(chalk.red("Not implemented yet"))
+		}
+
+		if (android) {
+			const cwd = process.cwd();
+			try {
+				const nmDir = path.resolve(cwd, "node_modules");
+				const moduleDir = await findModuleDirInNM(nmDir, name);
+
+				if (!moduleDir) {
+					throw new Error(chalk.red(`Invalid module name. Can not find module named as ${chalk.yellowBright(name)} in ${chalk.gray(nmDir)}`))
+				}
+
+				const androidModulePath = path.resolve(moduleDir, "android");
+
+				let dest = "";
+
+				if (moduleLocation) {
+					dest = path.resolve(moduleLocation, "android")
+				} else {
+					dest = path.resolve(cwd, "../", "android")
+				}
+
+				await fs.cp(androidModulePath, dest, {force: true, recursive: true})
+				console.log(chalk.green(`Files in module directory ${dest} successfully synchronized with files in working directory located in ${androidModulePath}`))
+			} catch (e) {
+				throw new Error(chalk.red(e));
+			}
+		}
+
+
+	})
+	
 
 commander.parse(process.argv)
