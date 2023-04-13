@@ -669,15 +669,37 @@ commander
 			throw new Error(chalk.red("Cannot run command without target platform"))
 		}
 
+		const cwd = process.cwd();
+		const nmDir = path.resolve(cwd, "node_modules");
+		const moduleDir = await findModuleDirInNM(nmDir, name);
+
 		if (ios) {
-			throw new Error(chalk.red("Not implemented yet"))
+			try {
+
+				if (!moduleDir) {
+					throw new Error(chalk.red(`Invalid module name. Can not find module named as ${chalk.yellowBright(name)} in ${chalk.gray(nmDir)}`))
+				}
+
+				const iosModulePath = path.resolve(moduleDir, "ios");
+
+				let dest = "";
+
+				if (moduleLocation) {
+					dest = path.resolve(moduleLocation, "ios")
+				} else {
+					dest = path.resolve(cwd, "../", "ios")
+				}
+
+				await fs.cp(iosModulePath, dest, {force: true, recursive: true})
+				console.log(chalk.green(`Files in module directory ${dest} successfully synchronized with files in working directory located in ${iosModulePath}`))
+			} catch (e) {
+				throw new Error(chalk.red(e));
+			}
 		}
 
+
 		if (android) {
-			const cwd = process.cwd();
 			try {
-				const nmDir = path.resolve(cwd, "node_modules");
-				const moduleDir = await findModuleDirInNM(nmDir, name);
 
 				if (!moduleDir) {
 					throw new Error(chalk.red(`Invalid module name. Can not find module named as ${chalk.yellowBright(name)} in ${chalk.gray(nmDir)}`))
